@@ -1,26 +1,31 @@
 server:
-  port: 8080
+  port: ${SPRING_PORT:8080}
+  servlet:
+    context-path: /api/v1
 
 spring:
   application:
     name: student-management-system-api
+  config:
+    import:
+      - optional:file:.env[.yaml]
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgres:5432/studentmanagement_db
-    username: Chhean
-    password: Chhean168
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
 
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-token:
+jwt:
   signing:
-    key: 413F4428472B4B6250655368566D5970337336763979244226452948404D6351
-    expiration: '60000000'
+    key: ${JWT_SIGNING_KEY}
+    expiration: ${JWT_EXPIRATION_TIME}
