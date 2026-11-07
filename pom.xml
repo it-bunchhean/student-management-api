@@ -46,13 +46,6 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
-        <!-- Springdoc OpenAPI UI -->
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc.version}</version>
-        </dependency>
-
         <!-- Apache POI (Excel support) -->
         <dependency>
             <groupId>org.apache.poi</groupId>

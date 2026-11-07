@@ -1,7 +1,7 @@
 package com.it_bunchhean.studentmanagement.security.user;
 
 import com.it_bunchhean.studentmanagement.entity.User;
-import org.jspecify.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,4 +51,5 @@ public class CustomUserDetails implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
 }

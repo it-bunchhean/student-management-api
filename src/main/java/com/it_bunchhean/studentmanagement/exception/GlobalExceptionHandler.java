@@ -1,10 +1,12 @@
 package com.it_bunchhean.studentmanagement.exception;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -76,6 +78,17 @@ public class GlobalExceptionHandler {
         log.error("unexpected error", e);
         return ResponseEntity.internalServerError()
                 .body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred"));
+    }
+
+    @ExceptionHandler(DucplicateResourceException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicate(DucplicateResourceException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuth(AuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Invalid email or password"));
     }
 
 }
