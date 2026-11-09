@@ -6,9 +6,7 @@ import com.it_bunchhean.studentmanagement.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,7 +30,13 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity<List<UserResponse>> allUsers() {
-        List <UserResponse> users = userService;
+        List <UserResponse> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUser(@RequestParam Long id) {
+        return ResponseEntity.ok(userService.getUser(id));
+    }
+
 }

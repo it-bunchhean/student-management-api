@@ -24,7 +24,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -32,5 +32,5 @@ spring:
 
 jwt:
   signing:
-    key: ${JWT_SIGNING_KEY}
-    expiration: ${JWT_EXPIRATION_TIME}
+    key: 413F4428472B4B6250655368566D5970337336763979244226452948404D6351
+    expiration: 60000000

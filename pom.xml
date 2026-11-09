@@ -46,6 +46,7 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
+
         <!-- Apache POI (Excel support) -->
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -116,6 +117,13 @@
             <artifactId>jjwt-jackson</artifactId>
             <version>0.12.6</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.10.1</version>
         </dependency>
 
         <!-- Testing Dependencies -->

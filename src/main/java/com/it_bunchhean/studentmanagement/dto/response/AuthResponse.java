@@ -3,12 +3,9 @@ package com.it_bunchhean.studentmanagement.dto.response;
 import lombok.Builder;
 
 @Builder
-public record LoginResponse(
-        String token,
+public record AuthResponse(
+        String accessToken,
+        String tokenType,
         long expiresIn
 ) {
-    public String getToken() {
-        return token;
-    }
-
 }

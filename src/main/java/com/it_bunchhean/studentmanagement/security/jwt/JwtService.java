@@ -30,11 +30,17 @@ public class JwtService {
             @Value("${jwt.signing.key}") String base64Secret,
             @Value("${jwt.signing.expiration}") long expirationMs
     ) {
+        if (base64Secret == null || base64Secret.isBlank()) {
+            throw new IllegalArgumentException("Jwt signing key must not be empty");
+        }
+
         if (expirationMs <= 0) {
             throw new IllegalArgumentException("security.jwt.expiration-time must be greater than 0");
         }
 
-        this.signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
+        byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
+
+        this .signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = expirationMs;
     }
 
@@ -68,7 +74,10 @@ public class JwtService {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             Claims claims = extractAllClaims(token);
-            return userDetails.getUsername().equals(claims.getSubject());
+
+            return userDetails.getUsername().equals(claims.getSubject())
+                    && claims.getExpiration().after(new Date());
+
         } catch (JwtException | IllegalArgumentException e){
             log.debug("Rejected invalid jwt: {}", e.getMessage());
             return false;

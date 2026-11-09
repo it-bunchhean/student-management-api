@@ -1,9 +1,9 @@
 package com.it_bunchhean.studentmanagement.controller;
 
-import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -56,7 +56,7 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<Page<StudentResponse>> getStudents(
             @RequestParam(required = false) String status,
-            @ParameterObject Pageable pageable
+            @PageableDefault(size = 20) Pageable pageable
     ) {
        pageable = validationPageable(pageable);
        return ResponseEntity.ok(studentService.getStudentWithFilter(status, pageable));
