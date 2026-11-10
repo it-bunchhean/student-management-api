@@ -9,11 +9,16 @@ import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
 import com.sun.jdi.request.DuplicateRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,24 +26,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthenticationService {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     public AuthenticationService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             UserMapper userMapper,
-            JwtService jwtService
+            JwtService jwtService,
+            UserDetailsService userDetailsService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Transactional
@@ -67,20 +77,34 @@ public class AuthenticationService {
     }
 
     public AuthResponse authenticate(LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
+        log.info("Login attempt for email: {}", request.email());
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtService.generateToken(userDetails);
+        try {
 
-        return AuthResponse.builder()
-                .accessToken(token)
-                .tokenType("Bearer ")
-                .expiresIn(jwtService.getExpirationTime())
-                .build();
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.email(),
+                            request.password()
+                    )
+            );
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String token = jwtService.generateToken(userDetails);
+
+            log.info("User authenticated successfully: {}", request.email());
+
+            return AuthResponse.builder()
+                    .accessToken(token)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtService.getExpirationTime())
+                    .build();
+
+        } catch (BadCredentialsException e) {
+            log.warn("Invalid credentials for email: {}", request.email());
+            throw e;
+        } catch (AuthenticationException e) {
+            log.error("Authentication failed for email: {}", request.email(), e);
+            throw e;
+        }
     }
 }
