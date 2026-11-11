@@ -2,17 +2,15 @@ package com.it_bunchhean.studentmanagement.user;
 
 
 import com.it_bunchhean.studentmanagement.constant.Role;
-import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
-import org.hibernate.type.internal.UserTypeJavaTypeWrapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
+import static com.it_bunchhean.studentmanagement.data.TestData.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
@@ -24,10 +22,10 @@ public class UserRepositoryTest {
 
     @Test
     void findByEmail_returnsUser() {
-        userRepository.save(User.builder().username("chheandev").email("chhean@gmail.com").password("hashed").role(Role.USER).build());
+        userRepository.save(user());
 
-        assertThat(userRepository.findByEmail("chhean@gmail.com")).isPresent();
-        assertThat(userRepository.existsByUsername("chheandev")).isTrue();
+        assertThat(userRepository.findByEmail(EMAIL)).isPresent();
+        assertThat(userRepository.existsByUsername(USERNAME)).isTrue();
         assertThat(userRepository.existsByEmail("nobody@gmail.com")).isFalse();
     }
 
@@ -51,12 +49,7 @@ public class UserRepositoryTest {
 
     @Test
     void search_filtersByKeywordAndRole() {
-        userRepository.save(User.builder()
-                .username("chheandev")
-                .email("chhean@gmail.com")
-                .password("chhean168")
-                .role(Role.USER)
-                .build());
+        userRepository.save(user());
         userRepository.save(User.builder()
                 .username("admin")
                 .email("admin@gmail.com")

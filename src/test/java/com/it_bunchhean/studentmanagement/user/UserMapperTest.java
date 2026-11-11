@@ -8,6 +8,7 @@ import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static com.it_bunchhean.studentmanagement.data.TestData.*;
 
 public class UserMapperTest {
 
@@ -15,24 +16,17 @@ public class UserMapperTest {
 
     @Test
     void toResponse_mapsAllFields_andHidesPassword() {
-        User user = User.builder()
-                .id(1L)
-                .username("chheandev")
-                .email("chhean@gmail.com")
-                .password("hashed")
-                .role(Role.ADMIN)
-                .build();
 
-        UserResponse response = userMapper.toResponse(user);
-        assertThat(response).isEqualTo(new UserResponse(1L, "chheandev", "chhean@gmail.com", Role.ADMIN));
+        UserResponse response = userMapper.toResponse(user());
+        assertThat(response).isEqualTo(new UserResponse(1L, USERNAME, EMAIL, Role.ADMIN));
     }
 
     @Test
     void toEntity_trimsAndLowercaseEmail_withoutPasswordOrRole() {
-        User user = userMapper.toEntity(new RegisterRequest("chheandev", "chhean@gmail.com", "chhean168"));
+        User user = userMapper.toEntity(new RegisterRequest(USERNAME, EMAIL, PASSWORD));
 
-        assertThat(user.getUsername()).isEqualTo("chheandev");
-        assertThat(user.getEmail()).isEqualTo("chhean@gmail.com");
+        assertThat(user.getUsername()).isEqualTo(USERNAME);
+        assertThat(user.getEmail()).isEqualTo(EMAIL);
         assertThat(user.getPassword()).isNull();
         assertThat(user.getRole()).isNull();
     }
