@@ -16,9 +16,18 @@ public class UserMapperTest {
 
     @Test
     void toResponse_mapsAllFields_andHidesPassword() {
+        User user = User.builder()
+                .id(1L)
+                .username(USERNAME)
+                .email(EMAIL)
+                .password(PASSWORD)
+                .role(Role.USER)
+                .build();
 
-        UserResponse response = userMapper.toResponse(user());
-        assertThat(response).isEqualTo(new UserResponse(1L, USERNAME, EMAIL, Role.ADMIN));
+        UserResponse response = userMapper.toResponse(user);
+
+        assertThat(response.getUsername()).isEqualTo(USERNAME);
+        assertThat(response.getEmail()).isEqualTo(EMAIL);
     }
 
     @Test

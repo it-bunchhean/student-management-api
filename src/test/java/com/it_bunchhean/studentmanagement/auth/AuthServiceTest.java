@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -43,8 +44,8 @@ public class AuthServiceTest {
     @Mock
     JwtService jwtService;
 
-    @Mock
-    UserMapper userMapper;
+    @Spy
+    UserMapper userMapper = new UserMapper();
 
     @InjectMocks
     AuthenticationService authenticationService;
@@ -53,9 +54,9 @@ public class AuthServiceTest {
     void register_success_encodePasswordAndAssignsUserRole() {
         RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
-        when(userRepository.existsByEmail("%s".formatted(EMAIL))).thenReturn(false);
-        when(userRepository.existsByUsername("%s".formatted(USERNAME))).thenReturn(false);
-        when(passwordEncoder.encode("%s".formatted(PASSWORD))).thenReturn("hashed");
+        when(userRepository.existsByEmail(EMAIL)).thenReturn(false);
+        when(userRepository.existsByUsername(USERNAME)).thenReturn(false);
+        when(passwordEncoder.encode(PASSWORD)).thenReturn("hashed");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User user = inv.getArgument(0);
             user.setId(1L);
@@ -65,7 +66,7 @@ public class AuthServiceTest {
         User response = authenticationService.signUp(request);
 
         assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getEmail()).isEqualTo("%s".formatted(EMAIL));
+        assertThat(response.getEmail()).isEqualTo(EMAIL);
         assertThat(response.getRole()).isEqualTo(Role.USER);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
@@ -77,7 +78,7 @@ public class AuthServiceTest {
     void register_duplicateEmail_throwsAndDoesNotSave() {
         RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
-        when(userRepository.existsByEmail("%s".formatted(EMAIL))).thenReturn(true);
+        when(userRepository.existsByEmail(EMAIL)).thenReturn(true);
 
         assertThatThrownBy(() -> authenticationService.signUp(request))
                 .isInstanceOf(RuntimeException.class)
@@ -95,13 +96,13 @@ public class AuthServiceTest {
 
         when(authenticationManager.authenticate(any())).thenReturn(auth);
         when(jwtService.generateToken(principal)).thenReturn("jwt-token");
-        when(jwtService.getExpirationTime()).thenReturn(null);
+        when(jwtService.getExpirationTime()).thenReturn(1800L);
 
         AuthResponse response = authenticationService.authenticate(new LoginRequest("chhean@gmail.com", "chhean168"));
 
         assertThat(response.accessToken()).isEqualTo("jwt-token");
         assertThat(response.tokenType()).isEqualTo("Bearer");
-        assertThat(response.expiresIn()).isEqualTo("1800");
+        assertThat(response.expiresIn()).isEqualTo(1800L);
     }
 
     @Test

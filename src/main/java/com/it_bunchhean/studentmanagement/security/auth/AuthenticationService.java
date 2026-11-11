@@ -10,6 +10,7 @@ import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
 import com.sun.jdi.request.DuplicateRequestException;
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,25 +35,23 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
     public AuthenticationService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             UserMapper userMapper,
-            JwtService jwtService,
-            UserDetailsService userDetailsService
+            JwtService jwtService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Transactional
+    @NotNull
     public User signUp(RegisterRequest request) {
 
         String email = request.email();
