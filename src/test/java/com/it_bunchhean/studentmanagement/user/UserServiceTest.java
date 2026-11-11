@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service;
+package com.it_bunchhean.studentmanagement.user;
 
 import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;

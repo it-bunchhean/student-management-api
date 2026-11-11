@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service.impl;
+package com.it_bunchhean.studentmanagement.user.impl;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -17,7 +17,7 @@ import com.it_bunchhean.studentmanagement.dto.BaseRequestDTO;
 import com.it_bunchhean.studentmanagement.dto.BaseResponseDTO;
 import com.it_bunchhean.studentmanagement.mapper.BaseMapper;
 import com.it_bunchhean.studentmanagement.repository.BaseRepository;
-import com.it_bunchhean.studentmanagement.service.BaseService;
+import com.it_bunchhean.studentmanagement.user.BaseService;
 
 @Transactional
 public abstract class BaseServiceImpl <E extends BaseEntity,

@@ -1,0 +1,70 @@
+package com.it_bunchhean.studentmanagement.user;
+
+
+import com.it_bunchhean.studentmanagement.constant.Role;
+import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
+import com.it_bunchhean.studentmanagement.entity.User;
+import com.it_bunchhean.studentmanagement.repository.UserRepository;
+import org.hibernate.type.internal.UserTypeJavaTypeWrapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+
+@DataJpaTest
+public class UserRepositoryTest {
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Test
+    void findByEmail_returnsUser() {
+        userRepository.save(User.builder().username("chheandev").email("chhean@gmail.com").password("hashed").role(Role.USER).build());
+
+        assertThat(userRepository.findByEmail("chhean@gmail.com")).isPresent();
+        assertThat(userRepository.existsByUsername("chheandev")).isTrue();
+        assertThat(userRepository.existsByEmail("nobody@gmail.com")).isFalse();
+    }
+
+    @Test
+    void save_duplicateEmail_violatesUniqueConstraint() {
+        userRepository.saveAndFlush(User.builder()
+                        .username("a")
+                        .email("same@gmail.com")
+                        .password("x")
+                        .role(Role.USER)
+                        .build());
+        assertThatThrownBy(() -> userRepository.saveAndFlush(
+                User.builder()
+                        .username("b")
+                        .email("same@gmail.com")
+                        .password("x")
+                        .role(Role.USER)
+                        .build()))
+                .isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void search_filtersByKeywordAndRole() {
+        userRepository.save(User.builder()
+                .username("chheandev")
+                .email("chhean@gmail.com")
+                .password("chhean168")
+                .role(Role.USER)
+                .build());
+        userRepository.save(User.builder()
+                .username("admin")
+                .email("admin@gmail.com")
+                .password("admin123")
+                .role(Role.ADMIN)
+                .build());
+
+        Page<User> result = userRepository.search("so", Role.USER, PageRequest.of(0, 10));
+        assertThat(result.getContent()).extracting(User::getUsername).containsExactly("chheandev");
+    }
+}

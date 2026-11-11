@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service.impl;
+package com.it_bunchhean.studentmanagement.user.impl;
 
 import com.it_bunchhean.studentmanagement.entity.Subject;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
@@ -6,7 +6,7 @@ import com.it_bunchhean.studentmanagement.dto.request.SubjectRequest;
 import com.it_bunchhean.studentmanagement.dto.response.SubjectResponse;
 import com.it_bunchhean.studentmanagement.mapper.SubjectMapper;
 import com.it_bunchhean.studentmanagement.repository.SubjectRepository;
-import com.it_bunchhean.studentmanagement.service.SubjectService;
+import com.it_bunchhean.studentmanagement.user.SubjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

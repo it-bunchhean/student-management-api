@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.dto.request.DepartmentRequest;
 import com.it_bunchhean.studentmanagement.dto.response.DepartmentResponse;
-import com.it_bunchhean.studentmanagement.service.DepartmentService;
+import com.it_bunchhean.studentmanagement.user.DepartmentService;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

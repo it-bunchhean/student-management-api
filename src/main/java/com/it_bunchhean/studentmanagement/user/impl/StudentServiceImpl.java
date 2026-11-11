@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service.impl;
+package com.it_bunchhean.studentmanagement.user.impl;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import com.it_bunchhean.studentmanagement.entity.Student;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.mapper.StudentMapper;
 import com.it_bunchhean.studentmanagement.repository.StudentRepository;
-import com.it_bunchhean.studentmanagement.service.StudentService;
+import com.it_bunchhean.studentmanagement.user.StudentService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

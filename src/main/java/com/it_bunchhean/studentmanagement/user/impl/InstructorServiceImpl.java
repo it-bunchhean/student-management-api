@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service.impl;
+package com.it_bunchhean.studentmanagement.user.impl;
 
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import com.it_bunchhean.studentmanagement.dto.request.InstructorRequest;
 import com.it_bunchhean.studentmanagement.dto.response.InstructorResponse;
 import com.it_bunchhean.studentmanagement.mapper.InstructorMapper;
 import com.it_bunchhean.studentmanagement.repository.InstructorRepository;
-import com.it_bunchhean.studentmanagement.service.InstructorService;
+import com.it_bunchhean.studentmanagement.user.InstructorService;
 
 import lombok.extern.slf4j.Slf4j;
 

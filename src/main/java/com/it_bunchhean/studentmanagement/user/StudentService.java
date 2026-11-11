@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.service;
+package com.it_bunchhean.studentmanagement.user;
 
 import com.it_bunchhean.studentmanagement.entity.Student;
 import org.springframework.data.domain.Page;

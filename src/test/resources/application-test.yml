@@ -11,3 +11,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS0zMmJ5dGVz
+    expiration: 30m
+  cors:
+    allowed-origins: http://localhost:3000
