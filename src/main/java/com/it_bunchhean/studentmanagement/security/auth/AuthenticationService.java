@@ -4,6 +4,7 @@ import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
 import com.it_bunchhean.studentmanagement.dto.response.AuthResponse;
+import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;

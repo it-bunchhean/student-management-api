@@ -4,6 +4,7 @@ import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
 import com.it_bunchhean.studentmanagement.dto.response.AuthResponse;
+import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
@@ -21,6 +22,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static com.it_bunchhean.studentmanagement.data.TestData.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,21 +52,21 @@ public class AuthServiceTest {
 
     @Test
     void register_success_encodePasswordAndAssignsUserRole() {
-        RegisterRequest request = new RegisterRequest("chheandev", "chhean@gmail.com", "chhean168");
+        RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
-        when(userRepository.existsByEmail("chhean@gmail.com")).thenReturn(false);
-        when(userRepository.existsByUsername("chhean")).thenReturn(false);
-        when(passwordEncoder.encode("chhean168")).thenReturn("hashed");
+        when(userRepository.existsByEmail("%s".formatted(EMAIL))).thenReturn(false);
+        when(userRepository.existsByUsername("%s".formatted(USERNAME))).thenReturn(false);
+        when(passwordEncoder.encode("%s".formatted(PASSWORD))).thenReturn("hashed");
         when(userRepository.save(any(User.class))).thenAnswer(inv -> {
             User user = inv.getArgument(0);
             user.setId(1L);
             return user;
         });
 
-        User response = authenticationService.signUp(request);
+        UserResponse response = authenticationService.signUp(request);
 
         assertThat(response.getId()).isEqualTo(1L);
-        assertThat(response.getEmail()).isEqualTo("chhean@gmail.com");
+        assertThat(response.getEmail()).isEqualTo("%s".formatted(EMAIL));
         assertThat(response.getRole()).isEqualTo(Role.USER);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
@@ -73,9 +76,9 @@ public class AuthServiceTest {
 
     @Test
     void register_duplicateEmail_throwsAndDoesNotSave() {
-        RegisterRequest request = new RegisterRequest("chheandev", "chhean@gmail.com", "chhean168");
+        RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
-        when(userRepository.existsByEmail("chhean@gmail.com")).thenReturn(true);
+        when(userRepository.existsByEmail("%s".formatted(EMAIL))).thenReturn(true);
 
         assertThatThrownBy(() -> authenticationService.signUp(request))
                 .isInstanceOf(RuntimeException.class)
@@ -86,13 +89,7 @@ public class AuthServiceTest {
 
     @Test
     void login_success_returnsToken() {
-        User user = User.builder()
-                .id(1L)
-                .username("chheandev")
-                .email("chhean@gamil.com")
-                .password("hashed")
-                .role(Role.USER)
-                .build();
+        User user = new User(1L, USERNAME, EMAIL, PASSWORD, Role.USER);
 
         CustomUserDetails principal = new CustomUserDetails(user);
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
@@ -111,9 +108,10 @@ public class AuthServiceTest {
     @Test
     void login_badCredentials_propagatesException() {
         when(authenticationManager.authenticate(any()))
-                .thenThrow(new BadCredentialsException("bad Ass"));
+                .thenThrow(new BadCredentialsException("bad"));
 
-        assertThatThrownBy(() -> authenticationService.authenticate(new LoginRequest("chhean@gmail.com", "chhean168")))
+        assertThatThrownBy(() -> authenticationService.authenticate(
+                new LoginRequest("%s".formatted(EMAIL), "%s".formatted(PASSWORD))))
                 .isInstanceOf(BadCredentialsException.class);
     }
 

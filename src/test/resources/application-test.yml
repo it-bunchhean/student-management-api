@@ -1,4 +1,5 @@
 spring:
+
   h2:
     console:
       enabled: true
@@ -11,9 +12,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+
+  config:
+    import:
+      - optional:file:.env[.yaml]
+
 app:
   jwt:
-    secret: dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS0zMmJ5dGVz
+    secret: ${JWT_SECRET_KEY_TEST}
     expiration: 30m
   cors:
     allowed-origins: http://localhost:3000
+
+
+test-data:
+  username: chhean
+  email: chhean@gmail.com
+  password: chhean168

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.it_bunchhean.studentmanagement.data.TestData.*;
 
 @WebMvcTest(AuthControllerTest.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -45,24 +46,24 @@ public class AuthControllerTest {
 
     @Test
     void register_validRequest_returns201() throws Exception {
-        RegisterRequest request = new RegisterRequest("chheandev", "chhean@gmail.com", "chhean168");
+        RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
-        when(authenticationService.signUp(any()))
-                .thenReturn(new UserResponse( 1L, "chheandev", "chhean@gmail.com", Role.USER));
+//        when(authenticationService.signUp(any()))
+//                .thenReturn(request);
 
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("chhean@gmail.com"))
+                .andExpect(jsonPath("$.email").value(EMAIL))
                 .andExpect(jsonPath("$.password").doesNotExist());
 
     }
 
     @Test
     void register_invalidEmail_returns400WithFieldErrors() throws Exception {
-        RegisterRequest request = new RegisterRequest("chheandev", "chhean@gmail.com", "chhean168");
+        RegisterRequest request = new RegisterRequest(USERNAME, EMAIL, PASSWORD);
 
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,9 +79,7 @@ public class AuthControllerTest {
 
         mockMvc.perform(post("/api/v1/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {"username":"chheandev", "email": "chhean@gmail.com", "password": "chhean168"}
-                        """))
+                .content(regsiterJson()))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.detail").value("Email already registered"));
     }
@@ -92,9 +91,7 @@ public class AuthControllerTest {
 
         mockMvc.perform(post("/api/v1/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                        {"email": "chhean@gmail.com", "password": "chhean168"}
-                        """))
+                .content(loginJson()))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.detail").value("Invalid email or password"));
     }
