@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.it_bunchhean.studentmanagement.dto.request.CreateStudentRequest;
 import com.it_bunchhean.studentmanagement.dto.request.UpdateStudentRequest;
 import com.it_bunchhean.studentmanagement.dto.response.StudentResponse;
-import com.it_bunchhean.studentmanagement.user.StudentService;
+import com.it_bunchhean.studentmanagement.service.StudentService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.user.impl;
+package com.it_bunchhean.studentmanagement.service.impl;
 
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import com.it_bunchhean.studentmanagement.entity.Department;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.mapper.DepartmentMapper;
 import com.it_bunchhean.studentmanagement.repository.DepartmentRepository;
-import com.it_bunchhean.studentmanagement.user.DepartmentService;
+import com.it_bunchhean.studentmanagement.service.DepartmentService;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.user;
+package com.it_bunchhean.studentmanagement.service;
 
 import com.it_bunchhean.studentmanagement.dto.request.InstructorRequest;
 import com.it_bunchhean.studentmanagement.dto.response.InstructorResponse;

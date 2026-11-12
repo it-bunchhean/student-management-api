@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.user;
+package com.it_bunchhean.studentmanagement.service;
 
 import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
@@ -31,7 +31,7 @@ public class UserServiceTest {
     UserMapper userMapper = new UserMapper();
 
     @InjectMocks
-    UserService userService;
+    userserviceimpl userService;
 
     @Test
     void getAll_returnMappedPage() {

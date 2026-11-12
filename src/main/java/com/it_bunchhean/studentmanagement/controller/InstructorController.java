@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.it_bunchhean.studentmanagement.dto.request.InstructorRequest;
 import com.it_bunchhean.studentmanagement.dto.response.InstructorResponse;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
-import com.it_bunchhean.studentmanagement.user.InstructorService;
+import com.it_bunchhean.studentmanagement.service.InstructorService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

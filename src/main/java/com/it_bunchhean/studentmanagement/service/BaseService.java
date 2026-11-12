@@ -1,4 +1,4 @@
-package com.it_bunchhean.studentmanagement.user;
+package com.it_bunchhean.studentmanagement.service;
 
 import java.io.Serializable;
 import java.util.List;

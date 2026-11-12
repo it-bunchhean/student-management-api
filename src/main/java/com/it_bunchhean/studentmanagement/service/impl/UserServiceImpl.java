@@ -1,11 +1,11 @@
-package com.it_bunchhean.studentmanagement.user.impl;
+package com.it_bunchhean.studentmanagement.service.impl;
 
 import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
-import com.it_bunchhean.studentmanagement.user.UserService;
+import com.it_bunchhean.studentmanagement.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
