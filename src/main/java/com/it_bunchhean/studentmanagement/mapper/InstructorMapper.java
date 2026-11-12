@@ -1,6 +1,5 @@
 package com.it_bunchhean.studentmanagement.mapper;
 
-
 import com.it_bunchhean.studentmanagement.config.BaseMapperConfig;
 import com.it_bunchhean.studentmanagement.entity.Instructor;
 import com.it_bunchhean.studentmanagement.dto.request.InstructorRequest;
