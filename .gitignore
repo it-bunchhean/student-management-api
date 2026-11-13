@@ -14,8 +14,10 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.env 
+.env
+.env.*
 .idea
+!.env.example
 .vscode
 *.iws
 *.iml

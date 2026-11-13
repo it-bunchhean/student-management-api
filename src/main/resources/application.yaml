@@ -16,9 +16,9 @@ app:
 spring:
   application:
     name: student-management-system-api
+
   config:
-    import:
-      - optional:file:.env[.yaml]
+    import: optional:file:.env[.properties]
 
   datasource:
     driver-class-name: org.postgresql.Driver

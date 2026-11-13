@@ -5,6 +5,7 @@ import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
+import com.it_bunchhean.studentmanagement.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -31,7 +32,7 @@ public class UserServiceTest {
     UserMapper userMapper = new UserMapper();
 
     @InjectMocks
-    userserviceimpl userService;
+    UserServiceImpl userService;
 
     @Test
     void getAll_returnMappedPage() {
