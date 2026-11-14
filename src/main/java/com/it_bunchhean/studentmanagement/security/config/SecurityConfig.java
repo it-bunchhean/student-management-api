@@ -27,6 +27,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtAuthenticationFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -54,6 +55,10 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/api-docs/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll()
                         .anyRequest().authenticated()
                 )

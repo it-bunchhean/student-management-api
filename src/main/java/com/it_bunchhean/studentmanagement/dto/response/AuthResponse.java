@@ -8,4 +8,11 @@ public record AuthResponse(
         String tokenType,
         long expiresIn
 ) {
+    public AuthResponse(String accessToken, long expiresIn) {
+        this(
+                accessToken,
+                "Bearer",
+                expiresIn
+        );
+    }
 }

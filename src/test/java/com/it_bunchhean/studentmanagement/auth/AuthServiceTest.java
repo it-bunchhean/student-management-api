@@ -89,7 +89,7 @@ public class AuthServiceTest {
 
     @Test
     void login_success_returnsToken() {
-        User user = new User(1L, USERNAME, EMAIL, PASSWORD, Role.USER);
+        User user = new User(1L, USERNAME, EMAIL, PASSWORD, Role.USER, FIRSTNAME, LASTNAME, PHONENUMBER);
 
         CustomUserDetails principal = new CustomUserDetails(user);
         Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());

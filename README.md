@@ -1,4 +1,4 @@
-# Student Management System (University Level)
+## Student Management System (University Level)
 
 ## Project Overview
 

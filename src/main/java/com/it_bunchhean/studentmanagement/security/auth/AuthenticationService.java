@@ -4,7 +4,6 @@ import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
 import com.it_bunchhean.studentmanagement.dto.response.AuthResponse;
-import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
@@ -20,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

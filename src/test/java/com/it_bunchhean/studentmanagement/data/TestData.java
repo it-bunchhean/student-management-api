@@ -12,6 +12,9 @@ public final class TestData {
     public static final String EMAIL = "chhean@gamil.com";
     public static final String PASSWORD = "chhean168";
     public static final String HASED_PASSWORD = "hashed";
+    public static final String FIRSTNAME = "chhong";
+    public static final String LASTNAME = "bunchhean";
+    public static final String PHONENUMBER = "061876928";
 
     public static RegisterRequest registerRequest() {
         return new RegisterRequest(USERNAME, EMAIL, PASSWORD);
@@ -27,6 +30,9 @@ public final class TestData {
                 .username(USERNAME)
                 .email(EMAIL)
                 .password(HASED_PASSWORD)
+                .firstName(FIRSTNAME)
+                .lastName(LASTNAME)
+                .phoneNumber(PHONENUMBER)
                 .build();
     }
 
