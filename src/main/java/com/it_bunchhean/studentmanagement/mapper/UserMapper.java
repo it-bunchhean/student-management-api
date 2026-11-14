@@ -1,6 +1,7 @@
 package com.it_bunchhean.studentmanagement.mapper;
 
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
+import com.it_bunchhean.studentmanagement.dto.request.UpdateUserRequest;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import org.springframework.stereotype.Component;
@@ -22,12 +23,14 @@ public class UserMapper {
                 user.getRole(),
                 user.getFirstName(),
                 user.getLastName(),
-               user.getPhoneNumber()
+                user.getPhoneNumber()
         );
-
     }
 
     public List<UserResponse> toResponseList(List<User> users) {
+        if (users == null) {
+            return List.of();
+        }
         return users.stream()
                 .map(this::toResponse)
                 .toList();
@@ -45,12 +48,36 @@ public class UserMapper {
     }
 
     public void updateEntity(RegisterRequest request, User user) {
-        if (request.username() != null) {
-            user.setUsername(request.email().trim().toLowerCase());
+        if (request == null || user == null) {
+            return;
         }
 
-        if (request.email() != null) {
+        if (request.username() != null && !request.username().isBlank()) {
+            user.setUsername(request.username().trim()); // Fixed: assigned username correctly
+        }
+
+        if (request.email() != null && !request.email().isBlank()) {
             user.setEmail(request.email().trim().toLowerCase());
         }
     }
+
+    // Added method to handle profile updates using your UpdateUserRequest
+    public void updateEntityFromRequest(UpdateUserRequest request, User user) {
+        if (request == null || user == null) {
+            return;
+        }
+
+        if (request.firstName() != null && !request.firstName().isBlank()) {
+            user.setFirstName(request.firstName().trim());
+        }
+
+        if (request.lastName() != null && !request.lastName().isBlank()) {
+            user.setLastName(request.lastName().trim());
+        }
+
+        if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) {
+            user.setPhoneNumber(request.phoneNumber().trim());
+        }
+    }
+
 }

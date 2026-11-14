@@ -33,9 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(Long id) {
-        return userRepository.findById(id)
-                .map(userMapper::toResponse)
+        System.out.print("Fetching user with ID: " + id);
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+        return userMapper.toResponse(user);
     }
 
     @Override
@@ -62,13 +63,11 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateUser(Long userId, UpdateUserRequest request) {
         User user = findUserById(userId);
 
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setPhoneNumber(request.phoneNumber());
+        userMapper.updateEntityFromRequest(request, user);
 
-        User updateUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        return userMapper.toResponse(updateUser);
+        return userMapper.toResponse(savedUser);
     }
 
     @Override
