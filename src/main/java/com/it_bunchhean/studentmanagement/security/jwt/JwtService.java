@@ -27,15 +27,15 @@ public class JwtService {
     private final long expirationMs;
 
     public JwtService(
-            @Value("${jwt.signing.key}") String base64Secret,
-            @Value("${jwt.signing.expiration}") long expirationMs
+            @Value(value = "${jwt.secret}") String base64Secret,
+            @Value(value = "${jwt.expiration}") long expirationMs
     ) {
         if (base64Secret == null || base64Secret.isBlank()) {
             throw new IllegalArgumentException("Jwt signing key must not be empty");
         }
 
         if (expirationMs <= 0) {
-            throw new IllegalArgumentException("security.jwt.expiration-time must be greater than 0");
+            throw new IllegalArgumentException("jwt.expiration must be greater than 0");
         }
 
         byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
@@ -50,11 +50,13 @@ public class JwtService {
 
     public String generateToken(Map<String, Object> extractClaims, UserDetails userDetails) {
         Instant now = Instant.now();
+
+        Instant expiration = now.plusMillis(expirationMs);
         return Jwts.builder()
-                .claims(new HashMap<>(extractClaims))
+                .claims(extractClaims != null ? new HashMap<>(extractClaims) : new HashMap<>())
                 .subject(userDetails.getUsername())
                 .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plusMillis(expirationMs)))
+                .expiration(Date.from(expiration))
                 .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
     }

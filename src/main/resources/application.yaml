@@ -36,6 +36,10 @@ spring:
         format_sql: true
 
 jwt:
-  signing:
-    key: ${JWT_SIGNING_KEY}
-    expiration: ${JWT_EXPIRATION_TIME}
+  secret: ${JWT_SIGNING_KEY}
+  expiration: ${JWT_EXPIRATION_TIME}
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG

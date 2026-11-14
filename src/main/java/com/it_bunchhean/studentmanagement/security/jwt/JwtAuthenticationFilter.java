@@ -2,6 +2,10 @@ package com.it_bunchhean.studentmanagement.security.jwt;
 
 import java.io.IOException;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,18 +20,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
-    public JwtAuthenticationFilter(
-            JwtService jwtService,
-            UserDetailsService userDetailsService
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.jwtService = jwtService;
-    }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -38,9 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
 
@@ -72,9 +70,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             }
 
-        } catch (RuntimeException e) {
-            logger.warn("JWT authentication failed: {}", e);
-            SecurityContextHolder.clearContext();
+        } catch (ExpiredJwtException e) {
+            log.error("Jwt token is expired: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Token has expired.");
+        } catch (Exception e) {
+            log.error("Cannot set user authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
