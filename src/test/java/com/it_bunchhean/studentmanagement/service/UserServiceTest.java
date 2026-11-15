@@ -45,8 +45,8 @@ public class UserServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        when(userRepository.search(null, null, pageable))
-                .thenReturn(new PageImpl<>(List.of(user), pageable, 1));
+//        when(userRepository.search(null, null, pageable))
+//                .thenReturn(new PageImpl<>(List.of(user), pageable, 1));
 
         Page<UserResponse> result = userService.getAll(null, null, pageable);
 

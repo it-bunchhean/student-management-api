@@ -9,10 +9,12 @@ import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.service.UserService;
+import com.it_bunchhean.studentmanagement.specification.UserSpecificatioin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,7 +66,10 @@ public class UserServiceImpl implements UserService {
                 ? null
                 : keyword.trim();
 
-        return userRepository.search(normalized, role, safe)
+        Specification<User> specification =
+                UserSpecificatioin.search(normalized, role);
+
+        return userRepository.findAll(specification, safe)
                 .map(userMapper::toResponse);
     }
 
