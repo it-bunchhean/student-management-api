@@ -1,13 +1,16 @@
 package com.it_bunchhean.studentmanagement.security.auth;
 
 import com.it_bunchhean.studentmanagement.dto.request.RefreshTokenRequest;
+import com.it_bunchhean.studentmanagement.dto.response.RefreshTokenResponse;
+import com.it_bunchhean.studentmanagement.entity.RefreshToken;
+import com.it_bunchhean.studentmanagement.service.RefreshTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
@@ -22,13 +25,16 @@ public class AuthenticationController {
 
    private final AuthenticationService authenticationService;
    private final UserMapper userMapper;
+   private final RefreshTokenService refreshTokenService;
 
    public AuthenticationController(
            AuthenticationService authenticationService,
-           UserMapper userMapper
+           UserMapper userMapper,
+           RefreshTokenService refreshTokenService
    ) {
        this.authenticationService = authenticationService;
        this.userMapper = userMapper;
+       this.refreshTokenService = refreshTokenService;
    }
 
    @PostMapping("/signup")
@@ -42,10 +48,19 @@ public class AuthenticationController {
        return ResponseEntity.ok(authenticationService.authenticate(request));
    }
 
-   @PostMapping("/refresh")
-    public ResponseEntity<AuthResponse> refresh(
-           @Valid @RequestBody RefreshTokenRequest request
-   ) {
-       return ResponseEntity.ok(authenticationService.refreshToken(request.refreshToken()));
+   @Operation(summary = "Retrieve new access token")
+   @GetMapping("/refresh")
+    public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request) {
+       String token = null;
+       for (Cookie cookie : request.getCookies()) {
+           if (cookie.getName().equals("token")) {
+               token = cookie.getValue();
+               break;
+           }
+       }
+
+       RefreshTokenResponse response = refreshTokenService.verify(token);
+
+       return ResponseEntity.ok().body(response);
    }
 }

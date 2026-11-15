@@ -67,40 +67,6 @@ public class JwtService {
                 .compact();
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
-        Date now = new Date();
-
-        return Jwts.builder()
-                .subject(userDetails.getUsername())
-                .claim("token_type","access")
-                .claim(
-                        "authorities",
-                        userDetails.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .toList()
-                )
-                .issuedAt(now)
-                .expiration(new Date(
-                        now.getTime() + expirationMs
-                ))
-                .signWith(signingKey)
-                .compact();
-    }
-
-    public String generateRefreshToken(String username) {
-
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + refreshTokenExpiration);
-
-        return Jwts.builder()
-                .subject(username)
-                .claim("token_type", "refresh")
-                .issuedAt(now)
-                .expiration(expiration)
-                .signWith(signingKey)
-                .compact();
-    }
-
     public boolean isRefreshTokenValid(String token) {
         try {
             Claims claims = extractAllClaims(token);

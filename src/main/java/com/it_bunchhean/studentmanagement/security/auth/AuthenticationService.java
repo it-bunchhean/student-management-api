@@ -115,9 +115,6 @@ public class AuthenticationService {
 
     public AuthResponse refreshToken(String refreshToken) {
 
-        if (!jwtService.isRefreshTokenValid(refreshToken)) {
-            throw new BadCredentialsException("Invalid refresh token");
-        }
 
         String username = jwtService.extractUsername(refreshToken);
 
