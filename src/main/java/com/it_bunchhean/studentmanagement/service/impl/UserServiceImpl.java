@@ -40,11 +40,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserResponse> getAll(String keyword, Role role, Pageable pageable) {
+    public Page<UserResponse> getAll(
+            String keyword,
+            Role role,
+            Pageable pageable
+    ) {
 
         pageable.getSort().forEach(order -> {
             if (!SORTABLE.contains(order.getProperty())) {
-                throw new IllegalArgumentException("Cannot sort by: " + order.getProperty());
+                throw new IllegalArgumentException(
+                        "Cannot sort by: " + order.getProperty()
+                );
             }
         });
 
@@ -54,8 +60,11 @@ public class UserServiceImpl implements UserService {
                 pageable.getSort()
         );
 
-        String normalized = (keyword == null || keyword.isBlank()) ? null : keyword.trim();
-        return userRepository.search(normalized, role, pageable)
+        String normalized = (keyword == null || keyword.isBlank())
+                ? null
+                : keyword.trim();
+
+        return userRepository.search(normalized, role, safe)
                 .map(userMapper::toResponse);
     }
 
