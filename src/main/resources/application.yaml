@@ -36,8 +36,11 @@ spring:
         format_sql: true
 
 jwt:
-  secret: ${JWT_SIGNING_KEY}
-  expiration: ${JWT_EXPIRATION_TIME}
+  access-token:
+    secret: ${JWT_SIGNING_KEY}
+    expiration: ${JWT_EXPIRATION_TIME}
+  refresh-token:
+    expiration: 604800000
 
 logging:
   level:

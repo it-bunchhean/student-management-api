@@ -8,10 +8,12 @@ import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
+import com.it_bunchhean.studentmanagement.security.user.CustomUserDetails;
 import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+
+    @Value(value = "${jwt.access-token.expiration}")
+    private long accessTokenExpiration;
 
     public AuthenticationService(
             UserRepository userRepository,
@@ -105,6 +111,30 @@ public class AuthenticationService {
             log.error("Authentication failed for email: {}", request.email(), e);
             throw e;
         }
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+
+        if (!jwtService.isRefreshTokenValid(refreshToken)) {
+            throw new BadCredentialsException("Invalid refresh token");
+        }
+
+        String username = jwtService.extractUsername(refreshToken);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found")
+                );
+
+        UserDetails userDetails = new CustomUserDetails(user);
+
+        String newAccessToken =
+                jwtService.generateAccessToken(userDetails);
+
+        String newRefreshToken =
+                jwtService.generateRefreshToken(username);
+
+        return new AuthResponse(newAccessToken, newRefreshToken, "Bearer", accessTokenExpiration / 100 );
     }
 
 }

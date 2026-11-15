@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +25,15 @@ public class JwtService {
     private static final Logger log = LoggerFactory.getLogger(JwtService.class);
 
     private final SecretKey signingKey;
+
     private final long expirationMs;
 
+    private final long refreshTokenExpiration;
+
     public JwtService(
-            @Value(value = "${jwt.secret}") String base64Secret,
-            @Value(value = "${jwt.expiration}") long expirationMs
+            @Value(value = "${jwt.access-token.secret}") String base64Secret,
+            @Value(value = "${jwt.access-token.expiration}") long expirationMs,
+            @Value(value = "${jwt.refresh-token.expiration}") long refreshTokenExpiration
     ) {
         if (base64Secret == null || base64Secret.isBlank()) {
             throw new IllegalArgumentException("Jwt signing key must not be empty");
@@ -42,6 +47,7 @@ public class JwtService {
 
         this .signingKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMs = expirationMs;
+        this.refreshTokenExpiration = refreshTokenExpiration;
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -59,6 +65,53 @@ public class JwtService {
                 .expiration(Date.from(expiration))
                 .signWith(signingKey, Jwts.SIG.HS256)
                 .compact();
+    }
+
+    public String generateAccessToken(UserDetails userDetails) {
+        Date now = new Date();
+
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .claim("token_type","access")
+                .claim(
+                        "authorities",
+                        userDetails.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toList()
+                )
+                .issuedAt(now)
+                .expiration(new Date(
+                        now.getTime() + expirationMs
+                ))
+                .signWith(signingKey)
+                .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + refreshTokenExpiration);
+
+        return Jwts.builder()
+                .subject(username)
+                .claim("token_type", "refresh")
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(signingKey)
+                .compact();
+    }
+
+    public boolean isRefreshTokenValid(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+
+            return "refresh".equals(
+                    claims.get("token_type", String.class)
+            ) && claims.getExpiration().after(new Date());
+
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public long getExpirationTime() {

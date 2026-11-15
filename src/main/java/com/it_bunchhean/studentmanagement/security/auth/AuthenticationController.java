@@ -1,5 +1,7 @@
 package com.it_bunchhean.studentmanagement.security.auth;
 
+import com.it_bunchhean.studentmanagement.dto.request.RefreshTokenRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,4 +42,10 @@ public class AuthenticationController {
        return ResponseEntity.ok(authenticationService.authenticate(request));
    }
 
+   @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(
+           @Valid @RequestBody RefreshTokenRequest request
+   ) {
+       return ResponseEntity.ok(authenticationService.refreshToken(request.refreshToken()));
+   }
 }
