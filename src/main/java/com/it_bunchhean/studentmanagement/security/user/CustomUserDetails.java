@@ -2,7 +2,6 @@ package com.it_bunchhean.studentmanagement.security.user;
 
 import com.it_bunchhean.studentmanagement.entity.User;
 import jakarta.annotation.Nullable;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +27,10 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        if (user.getRole() == null) {
+            return List.of();
+        }
+        return List.of(new SimpleGrantedAuthority(user.getRole().getAuthorityName()));
     }
 
     @Override

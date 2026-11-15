@@ -64,6 +64,7 @@ public class AuthenticationService {
 
         User user = userMapper.toEntity(request);
 
+
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.USER);
 

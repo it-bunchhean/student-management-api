@@ -71,6 +71,8 @@ public class GlobalExceptionHandler {
                 ));
     }
 
+
+
     @ExceptionHandler(DucplicateResourceException.class)
     public ResponseEntity<Map<String, String>> handleDuplicate(DucplicateResourceException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
