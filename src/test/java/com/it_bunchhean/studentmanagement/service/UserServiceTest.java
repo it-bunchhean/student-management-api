@@ -29,7 +29,7 @@ public class UserServiceTest {
     UserRepository userRepository;
 
     @Spy
-    UserMapper userMapper = new UserMapper();
+    UserMapper userMapper;
 
     @InjectMocks
     UserServiceImpl userService;

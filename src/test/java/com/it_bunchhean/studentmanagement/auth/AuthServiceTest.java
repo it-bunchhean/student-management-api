@@ -45,7 +45,7 @@ public class AuthServiceTest {
     JwtService jwtService;
 
     @Spy
-    UserMapper userMapper = new UserMapper();
+    UserMapper userMapper;
 
     @InjectMocks
     AuthenticationService authenticationService;

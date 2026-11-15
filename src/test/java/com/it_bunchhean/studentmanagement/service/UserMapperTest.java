@@ -12,7 +12,7 @@ import static com.it_bunchhean.studentmanagement.data.TestData.*;
 
 public class UserMapperTest {
 
-    private final UserMapper userMapper = new UserMapper();
+    private UserMapper userMapper;
 
     @Test
     void toResponse_mapsAllFields_andHidesPassword() {

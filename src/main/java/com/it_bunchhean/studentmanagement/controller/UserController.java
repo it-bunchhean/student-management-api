@@ -4,6 +4,7 @@ import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.request.ChangePasswordRequest;
 import com.it_bunchhean.studentmanagement.dto.request.UpdateUserRequest;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
+import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.user.CustomUserDetails;
 import com.it_bunchhean.studentmanagement.service.UserService;
@@ -55,7 +56,7 @@ public class UserController {
             @Valid @RequestBody UpdateUserRequest request
     ) {
         return ResponseEntity.ok(
-                userService.updateUser(currentUser.getId(),  request)
+                userService.updateUser(currentUser.getUser().getId(),  request)
         );
     }
 

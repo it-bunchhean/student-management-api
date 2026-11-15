@@ -4,80 +4,46 @@ import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
 import com.it_bunchhean.studentmanagement.dto.request.UpdateUserRequest;
 import com.it_bunchhean.studentmanagement.dto.response.UserResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
-import org.springframework.stereotype.Component;
+import org.mapstruct.*;
 
 import java.util.List;
 
-@Component
-public class UserMapper {
+@Mapper(
+        componentModel = "spring",
+        unmappedTargetPolicy = ReportingPolicy.IGNORE,
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
+public interface UserMapper {
 
-    public UserResponse toResponse(User user) {
-        if (user == null) {
-            return null;
-        }
+    UserResponse toResponse(User user);
 
-        return new UserResponse(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getPhoneNumber()
-        );
+    List<UserResponse> toResponseList(List<User> users);
+
+    @Mapping(target = "username", source = "username", qualifiedByName = "trim")
+    @Mapping(target = "email", source = "email", qualifiedByName = "normalizeEmail")
+    User toEntity(RegisterRequest request);
+
+    @Mapping(target = "username", source = "username", qualifiedByName = "trim")
+    @Mapping(target = "email", source = "email", qualifiedByName = "normalizeEmail")
+    void updateEntity(RegisterRequest request, @MappingTarget User user);
+
+    @Mapping(target = "firstName", source = "firstName", qualifiedByName = "trim")
+    @Mapping(target = "lastName", source = "lastName", qualifiedByName = "trim")
+    @Mapping(target = "phoneNumber", source = "phoneNumber", qualifiedByName = "trim")
+    void updateEntityFromRequest(UpdateUserRequest request, @MappingTarget User user);
+
+    @Condition
+    default boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 
-    public List<UserResponse> toResponseList(List<User> users) {
-        if (users == null) {
-            return List.of();
-        }
-        return users.stream()
-                .map(this::toResponse)
-                .toList();
+    @Named("trim")
+    default String trim(String value) {
+        return value == null ? null : value.trim();
     }
 
-    public User toEntity(RegisterRequest request) {
-        if (request == null) {
-            return null;
-        }
-
-        return User.builder()
-                .username(request.username().trim())
-                .email(request.email().trim().toLowerCase())
-                .build();
+    @Named("normalizeEmail")
+    default String normalizeEmail(String value) {
+        return value == null ? null : value.trim().toLowerCase();
     }
-
-    public void updateEntity(RegisterRequest request, User user) {
-        if (request == null || user == null) {
-            return;
-        }
-
-        if (request.username() != null && !request.username().isBlank()) {
-            user.setUsername(request.username().trim()); // Fixed: assigned username correctly
-        }
-
-        if (request.email() != null && !request.email().isBlank()) {
-            user.setEmail(request.email().trim().toLowerCase());
-        }
-    }
-
-    // Added method to handle profile updates using your UpdateUserRequest
-    public void updateEntityFromRequest(UpdateUserRequest request, User user) {
-        if (request == null || user == null) {
-            return;
-        }
-
-        if (request.firstName() != null && !request.firstName().isBlank()) {
-            user.setFirstName(request.firstName().trim());
-        }
-
-        if (request.lastName() != null && !request.lastName().isBlank()) {
-            user.setLastName(request.lastName().trim());
-        }
-
-        if (request.phoneNumber() != null && !request.phoneNumber().isBlank()) {
-            user.setPhoneNumber(request.phoneNumber().trim());
-        }
-    }
-
 }
