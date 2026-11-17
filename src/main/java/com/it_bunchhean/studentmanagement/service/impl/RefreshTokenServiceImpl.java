@@ -12,13 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
+import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -42,13 +42,18 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public RefreshToken create() {
-        RefreshToken refresh= new RefreshToken();
-        String randomRefreshToken = UUID.randomUUID().toString();
-        refresh.setToken(randomRefreshToken);
-        refresh.setExpiryAt(Instant.now().plusMillis(expirationTime));
-        log.info("Created refresh token [{}]", refresh);
-        return refresh;
+    public RefreshToken create(User user) {
+        RefreshToken refreshToken = new RefreshToken();
+
+        refreshToken.setToken(generateSecureToken());
+        refreshToken.setUser(user);
+        refreshToken.setExpiryAt(
+                Instant.now().plusMillis(expirationTime)
+        );
+
+        log.info("Refresh token created successfully");
+
+        return refreshTokenRepository.save(refreshToken);
     }
 
     @Override
@@ -59,34 +64,32 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     @Override
     public RefreshTokenResponse verify(String token) {
 
-        if (!jwtService.isRefreshTokenValid(token)) {
-            throw new BadCredentialsException("Invalid refresh token");
-        }
-
         RefreshToken refreshToken = this.findByToken(token)
                 .orElseThrow(() -> new ResourceAccessException("Refresh token not found"));
 
-
         if (refreshToken.getExpiryAt().isBefore(Instant.now())) {
-
-
-            String username = jwtService.extractUsername(token);
-
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() ->
-                            new UsernameNotFoundException("User not found")
-                    );
-
-            UserDetails userDetails = new CustomUserDetails(user);
-
-            String accessToken = jwtService.generateToken(userDetails);
-            return RefreshTokenResponse
-                    .builder()
-                    .token(accessToken)
-                    .build();
+            refreshTokenRepository.delete(refreshToken);
+            throw new BadCredentialsException("Refresh tokne expired");
         }
 
-        throw new IllegalArgumentException("Refresh token expired");
+        User user = refreshToken.getUser();
+
+        UserDetails userDetails = new CustomUserDetails(user);
+
+        String accessToken = jwtService.generateToken(userDetails);
+
+        return RefreshTokenResponse.builder()
+                .token(accessToken)
+                .build();
     }
 
+    private String generateSecureToken() {
+            byte[] randomBytes = new byte[64];
+
+            new SecureRandom().nextBytes(randomBytes);
+
+            return Base64.getUrlEncoder()
+                    .withoutPadding()
+                    .encodeToString(randomBytes);
+    }
 }

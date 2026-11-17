@@ -4,11 +4,12 @@ import com.it_bunchhean.studentmanagement.constant.Role;
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
 import com.it_bunchhean.studentmanagement.dto.response.AuthResponse;
+import com.it_bunchhean.studentmanagement.entity.RefreshToken;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
-import com.it_bunchhean.studentmanagement.security.user.CustomUserDetails;
+import com.it_bunchhean.studentmanagement.service.RefreshTokenService;
 import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
@@ -27,31 +28,34 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuthenticationService {
+public class AuthService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
 
     @Value(value = "${jwt.access-token.expiration}")
     private long accessTokenExpiration;
 
-    public AuthenticationService(
+    public AuthService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager,
             UserMapper userMapper,
-            JwtService jwtService
+            JwtService jwtService,
+            RefreshTokenService refreshTokenService
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userMapper = userMapper;
         this.jwtService = jwtService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Transactional
@@ -82,56 +86,36 @@ public class AuthenticationService {
     }
 
     public AuthResponse authenticate(LoginRequest request) {
+
         log.info("Login attempt for email: {}", request.email());
 
-        try {
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.email(),
+                                request.password()
+                        )
+                );
 
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.email(),
-                            request.password()
-                    )
-            );
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String token = jwtService.generateToken(userDetails);
+        String accessToken = jwtService.generateToken(userDetails);
 
-            log.info("User authenticated successfully: {}", request.email());
-
-            return AuthResponse.builder()
-                    .accessToken(token)
-                    .tokenType("Bearer")
-                    .expiresIn(jwtService.getExpirationTime())
-                    .build();
-
-        } catch (BadCredentialsException e) {
-            log.warn("Invalid credentials for email: {}", request.email());
-            throw e;
-        } catch (AuthenticationException e) {
-            log.error("Authentication failed for email: {}", request.email(), e);
-            throw e;
-        }
-    }
-
-    public AuthResponse refreshToken(String refreshToken) {
-
-
-        String username = jwtService.extractUsername(refreshToken);
-
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByEmail(request.email())
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found")
                 );
 
-        UserDetails userDetails = new CustomUserDetails(user);
+        RefreshToken refreshToken = refreshTokenService.create(user);
 
-        String newAccessToken =
-                jwtService.generateAccessToken(userDetails);
+        log.info("User authenticated successfully: {}", request.email());
 
-        String newRefreshToken =
-                jwtService.generateRefreshToken(username);
-
-        return new AuthResponse(newAccessToken, newRefreshToken, "Bearer", accessTokenExpiration / 100 );
+        return AuthResponse.builder()
+                .accessToken(accessToken)
+                .tokenType("Bearer")
+                .refreshToken(refreshToken.getToken())
+                .expiresIn(jwtService.getExpirationTime())
+                .build();
     }
 
 }

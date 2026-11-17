@@ -1,13 +1,10 @@
 package com.it_bunchhean.studentmanagement.security.auth;
 
-import com.it_bunchhean.studentmanagement.dto.request.RefreshTokenRequest;
 import com.it_bunchhean.studentmanagement.dto.response.RefreshTokenResponse;
-import com.it_bunchhean.studentmanagement.entity.RefreshToken;
 import com.it_bunchhean.studentmanagement.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +18,14 @@ import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 
 @RequestMapping("/auth")
 @RestController
-public class AuthenticationController {
+public class AuthController {
 
-   private final AuthenticationService authenticationService;
+   private final AuthService authenticationService;
    private final UserMapper userMapper;
    private final RefreshTokenService refreshTokenService;
 
-   public AuthenticationController(
-           AuthenticationService authenticationService,
+   public AuthController(
+           AuthService authenticationService,
            UserMapper userMapper,
            RefreshTokenService refreshTokenService
    ) {

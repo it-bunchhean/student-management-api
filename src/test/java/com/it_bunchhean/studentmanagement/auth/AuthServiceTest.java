@@ -7,7 +7,7 @@ import com.it_bunchhean.studentmanagement.dto.response.AuthResponse;
 import com.it_bunchhean.studentmanagement.entity.User;
 import com.it_bunchhean.studentmanagement.mapper.UserMapper;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
-import com.it_bunchhean.studentmanagement.security.auth.AuthenticationService;
+import com.it_bunchhean.studentmanagement.security.auth.AuthService;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
 import com.it_bunchhean.studentmanagement.security.user.CustomUserDetails;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class AuthServiceTest {
     UserMapper userMapper;
 
     @InjectMocks
-    AuthenticationService authenticationService;
+    AuthService authenticationService;
 
     @Test
     void register_success_encodePasswordAndAssignsUserRole() {

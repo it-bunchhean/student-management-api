@@ -2,7 +2,7 @@ package com.it_bunchhean.studentmanagement.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.it_bunchhean.studentmanagement.dto.request.RegisterRequest;
-import com.it_bunchhean.studentmanagement.security.auth.AuthenticationService;
+import com.it_bunchhean.studentmanagement.security.auth.AuthService;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
 import com.it_bunchhean.studentmanagement.security.user.CustomUserDetailsService;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class AuthControllerTest {
     ObjectMapper objectMapper;
 
     @MockitoBean
-    AuthenticationService authenticationService;
+    AuthService authenticationService;
 
     @MockitoBean
     JwtService jwtService;
