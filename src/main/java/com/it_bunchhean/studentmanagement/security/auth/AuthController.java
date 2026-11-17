@@ -1,12 +1,15 @@
 package com.it_bunchhean.studentmanagement.security.auth;
 
+import com.it_bunchhean.studentmanagement.dto.request.RefreshTokenRequest;
 import com.it_bunchhean.studentmanagement.dto.response.RefreshTokenResponse;
+import com.it_bunchhean.studentmanagement.entity.RefreshToken;
 import com.it_bunchhean.studentmanagement.service.RefreshTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.it_bunchhean.studentmanagement.dto.request.LoginRequest;
@@ -48,6 +51,7 @@ public class AuthController {
    @Operation(summary = "Retrieve new access token")
    @GetMapping("/refresh")
     public ResponseEntity<RefreshTokenResponse> refreshToken(HttpServletRequest request) {
+
        String token = null;
        for (Cookie cookie : request.getCookies()) {
            if (cookie.getName().equals("token")) {
@@ -59,5 +63,11 @@ public class AuthController {
        RefreshTokenResponse response = refreshTokenService.verify(token);
 
        return ResponseEntity.ok().body(response);
+   }
+
+   @GetMapping("/refresh/{token}")
+    public ResponseEntity<RefreshTokenResponse> getByAccessToken(@RequestBody RefreshTokenRequest request) {
+       RefreshToken refreshToken = refreshTokenService.findByToken(request.refreshToken());
+       return ResponseEntity.ok(refreshToken);
    }
 }

@@ -3,6 +3,7 @@ package com.it_bunchhean.studentmanagement.service.impl;
 import com.it_bunchhean.studentmanagement.dto.response.RefreshTokenResponse;
 import com.it_bunchhean.studentmanagement.entity.RefreshToken;
 import com.it_bunchhean.studentmanagement.entity.User;
+import com.it_bunchhean.studentmanagement.exception.ResourceNotFoundException;
 import com.it_bunchhean.studentmanagement.repository.RefreshTokenRepository;
 import com.it_bunchhean.studentmanagement.repository.UserRepository;
 import com.it_bunchhean.studentmanagement.security.jwt.JwtService;
@@ -57,15 +58,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     }
 
     @Override
-    public Optional<RefreshToken> findByToken(String refresh) {
-        return refreshTokenRepository.findByToken(refresh);
+    public RefreshToken findByToken(String refresh) {
+        return refreshTokenRepository.findByToken(refresh)
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
     }
 
     @Override
     public RefreshTokenResponse verify(String token) {
 
-        RefreshToken refreshToken = this.findByToken(token)
-                .orElseThrow(() -> new ResourceAccessException("Refresh token not found"));
+        RefreshToken refreshToken = this.findByToken(token);
 
         if (refreshToken.getExpiryAt().isBefore(Instant.now())) {
             refreshTokenRepository.delete(refreshToken);

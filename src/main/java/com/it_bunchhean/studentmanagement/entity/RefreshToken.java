@@ -28,4 +28,10 @@ public class RefreshToken {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
+
+    @Column(nullable = false, name = "cosume_at")
+    private Instant consumeAt;
+
+    @Column(nullable = false, name = "revoked_at")
+    private Instant revokedAt;
 }

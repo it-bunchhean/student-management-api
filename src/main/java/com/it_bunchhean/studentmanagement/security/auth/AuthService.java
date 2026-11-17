@@ -111,6 +111,7 @@ public class AuthService {
         log.info("User authenticated successfully: {}", request.email());
 
         return AuthResponse.builder()
+                .username(user.getUsername())
                 .accessToken(accessToken)
                 .tokenType("Bearer")
                 .refreshToken(refreshToken.getToken())
